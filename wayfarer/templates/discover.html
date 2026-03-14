@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Discover — Wayfarer{% endblock %}
+
+{% block content %}
+<section class="section container">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <div>
+      <h2>En-route Discoveries</h2>
+      {% if from_city and to_city %}
+      <p class="meta mt-2">Between {{ from_city }} and {{ to_city }}</p>
+      {% endif %}
+    </div>
+    
+    <!-- Filter Bar (GET form, no JS) -->
+    <form method="GET" action="/discover" class="filter-bar">
+      <input type="hidden" name="from" value="{{ from_city }}">
+      <input type="hidden" name="to" value="{{ to_city }}">
+      <button type="submit" name="filter" value="all" 
+              class="filter-btn {% if current_filter == 'all' %}active{% endif %}">All</button>
+      <button type="submit" name="filter" value="scenic"
+              class="filter-btn {% if current_filter == 'scenic' %}active{% endif %}">Scenic</button>
+      <button type="submit" name="filter" value="food"
+              class="filter-btn {% if current_filter == 'food' %}active{% endif %}">Food</button>
+      <button type="submit" name="filter" value="historic"
+              class="filter-btn {% if current_filter == 'historic' %}active{% endif %}">Historic</button>
+      <button type="submit" name="filter" value="nature"
+              class="filter-btn {% if current_filter == 'nature' %}active{% endif %}">Nature</button>
+    </form>
+  </div>
+  
+  <!-- Staggered Collage Grid -->
+  <div class="spots-grid">
+    {% for spot in spots %}
+    <a href="#{{ spot.id }}" class="card-link">
+      <div class="card {{ spot.card_class }}">
+        <img src="https://images.unsplash.com/photo-{{ spot.unsplash_id }}?w=800&fit=crop" 
+             alt="{{ spot.name }}" 
+             class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">{{ spot.name }}</h3>
+          <p class="card-caption">{{ spot.caption }}</p>
+          <div class="card-meta">
+            <span class="tag">{{ spot.category }}</span>
+            <span class="meta">📍 {{ spot.distance_km }} km · ⏱ {{ spot.visit_time }}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  
+  {% if spots|length == 0 %}
+  <div class="text-center py-20">
+    <p class="text-warm-400 text-lg">No spots found for this route. Try a different vibe or destination.</p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- Lightboxes for all spots (:target technique) -->
+{% for spot in spots %}
+<div id="{{ spot.id }}" class="lightbox">
+  <div class="lightbox-content">
+    <a href="#" class="lightbox__close">✕</a>
+    
+    <!-- Navigation between lightboxes -->
+    {% if loop.previtem %}
+    <a href="#{{ loop.previtem.id }}" class="lightbox__prev">←</a>
+    {% else %}
+    <a href="#{{ spots[-1].id }}" class="lightbox__prev">←</a>
+    {% endif %}
+    
+    {% if loop.nextitem %}
+    <a href="#{{ loop.nextitem.id }}" class="lightbox__next">→</a>
+    {% else %}
+    <a href="#{{ spots[0].id }}" class="lightbox__next">→</a>
+    {% endif %}
+    
+    <img src="https://images.unsplash.com/photo-{{ spot.unsplash_id }}?w=2400&fit=crop" 
+         alt="{{ spot.name }}" 
+         class="lightbox-image">
+    <div class="lightbox-info">
+      <h2>{{ spot.name }}</h2>
+      <p class="meta mb-4">📍 {{ spot.distance_km }} km along route · {{ spot.detour_min }} min detour · ⭐ {{ spot.rating }}</p>
+      <p class="mb-4">{{ spot.description }}</p>
+      <div class="card-meta">
+        {% for tag in spot.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
