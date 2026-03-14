@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Wayfarer — Discover what you'd otherwise drive past{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-left">
+    <h1 class="hero-title">Wayfarer</h1>
+    <p class="hero-subtitle">The road between is where the story lives.</p>
+    <p class="hero-tagline">Discover what you'd otherwise drive past.</p>
+    
+    <!-- Route Search Form (POST to /discover) -->
+    <form method="POST" action="/discover" class="route-search">
+      <div class="field-wrapper">
+        <input type="text" name="from" placeholder="Starting city" required>
+      </div>
+      <div class="field-wrapper">
+        <input type="text" name="to" placeholder="Destination" required>
+      </div>
+      <div class="field-wrapper">
+        <select name="vibe">
+          <option value="scenic">Scenic</option>
+          <option value="historic">Historic</option>
+          <option value="food">Local food</option>
+          <option value="nature">Nature</option>
+        </select>
+      </div>
+      <button type="submit" class="search-btn">Find the way</button>
+    </form>
+  </div>
+  
+  <div class="hero-right"></div>
+</section>
+
+<!-- Featured Spot Preview -->
+<section class="section container">
+  <h2 class="mb-8">Featured Discovery</h2>
+  <a href="#{{ featured.id }}" class="card-link">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-{{ featured.unsplash_id }}?w=800&fit=crop" 
+           alt="{{ featured.name }}" 
+           class="card-image">
+      <div class="card-content">
+        <h3 class="card-title">{{ featured.name }}</h3>
+        <p class="card-caption">{{ featured.caption }}</p>
+        <div class="card-meta">
+          <span class="tag">{{ featured.category }}</span>
+          <span class="meta">📍 {{ featured.distance_km }} km · ⏱ {{ featured.visit_time }}</span>
+        </div>
+      </div>
+    </div>
+  </a>
+  
+  <!-- Lightbox for featured spot -->
+  <div id="{{ featured.id }}" class="lightbox">
+    <div class="lightbox-content">
+      <a href="#" class="lightbox__close">✕</a>
+      <img src="https://images.unsplash.com/photo-{{ featured.unsplash_id }}?w=2400&fit=crop" 
+           alt="{{ featured.name }}" 
+           class="lightbox-image">
+      <div class="lightbox-info">
+        <h2>{{ featured.name }}</h2>
+        <p class="meta mb-4">📍 {{ featured.distance_km }} km along route · {{ featured.detour_min }} min detour</p>
+        <p>{{ featured.description }}</p>
+        <div class="card-meta mt-4">
+          {% for tag in featured.tags %}
+          <span class="tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

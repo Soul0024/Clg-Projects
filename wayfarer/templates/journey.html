@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}My Journey — Wayfarer{% endblock %}
+
+{% block content %}
+<section class="section container">
+  <h2 class="mb-8">My Journey</h2>
+  
+  <!-- Success Toast (Jinja2 conditional + CSS animation) -->
+  {% if success %}
+  <div class="toast">Journey updated ✓</div>
+  {% endif %}
+  
+  <div class="journey-layout">
+    <!-- Left Panel: Account / Checklist -->
+    <div>
+      {% if user %}
+      <!-- Logged In State -->
+      <div class="glass-panel mb-8">
+        <p class="text-lg mb-4">Welcome, {{ user.email }}</p>
+        <form method="POST" action="/journey">
+          <input type="hidden" name="action" value="logout">
+          <button type="submit" class="filter-btn">Sign Out</button>
+        </form>
+      </div>
+      
+      <!-- Journey Checklist -->
+      <h3 class="mb-4">Your Visited Spots</h3>
+      <div class="checklist">
+        {% for spot in all_spots %}
+        <form method="POST" action="/journey">
+          <input type="hidden" name="action" value="check_spot">
+          <input type="hidden" name="spot_id" value="{{ spot.id }}">
+          <button type="submit" class="check-btn {% if spot.id in checklist %}checked{% endif %}">
+            <span class="check-icon">✓</span>
+            <div>
+              <span>{{ spot.name }}</span>
+              <span class="meta block">{{ spot.corridor }} · {{ spot.distance_km }} km</span>
+            </div>
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+      
+      {% else %}
+      <!-- Login/Signup Forms -->
+      <div class="auth-form mb-6">
+        <h3 class="mb-4">Sign In</h3>
+        <form method="POST" action="/journey">
+          <input type="hidden" name="action" value="login">
+          <div class="field-wrapper">
+            <input type="email" name="email" required 
+                   placeholder="your@email.com"
+                   pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
+            <span class="field-error">Please enter a valid email address</span>
+          </div>
+          <div class="field-wrapper">
+            <input type="password" name="password" minlength="8" required 
+                   placeholder="Password (min 8 characters)">
+            <span class="field-error">Password must be at least 8 characters</span>
+          </div>
+          <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+      </div>
+      
+      <div class="auth-form">
+        <h3 class="mb-4">Create Account</h3>
+        <form method="POST" action="/journey">
+          <input type="hidden" name="action" value="signup">
+          <div class="field-wrapper">
+            <input type="email" name="email" required 
+                   placeholder="your@email.com"
+                   pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$">
+            <span class="field-error">Please enter a valid email address</span>
+          </div>
+          <div class="field-wrapper">
+            <input type="password" name="password" minlength="8" required 
+                   placeholder="Choose a password (min 8 characters)">
+            <span class="field-error">Password must be at least 8 characters</span>
+          </div>
+          <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Right Panel: Saved Spots Summary & Progress -->
+    <div>
+      <div class="glass-panel">
+        <h3 class="mb-4">Journey Progress</h3>
+        
+        <!-- Progress Bar (Python-interpolated width, no JS) -->
+        <div class="progress-track">
+          <div class="progress-fill" 
+               style="width: calc({{ checklist|length }} / {{ all_spots|length }} * 100%)"></div>
+        </div>
+        
+        <p class="stat">{{ checklist|length }} <span class="meta">of {{ all_spots|length }} spots visited</span></p>
+        
+        {% if checklist|length > 0 %}
+        <div class="mt-8">
+          <h4 class="mb-4 text-warm-400">Your Visited Spots</h4>
+          <ul class="space-y-2">
+            {% for spot in all_spots %}
+            {% if spot.id in checklist %}
+            <li class="flex items-center gap-2">
+              <span class="text-green-600">✓</span>
+              <span class="text-sm">{{ spot.name }}</span>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% else %}
+        <p class="text-warm-400 mt-8">Start checking off spots to track your journey!</p>
+        {% endif %}
+      </div>
+      
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-2 gap-4 mt-6">
+        <div class="card p-4 text-center">
+          <p class="stat">{{ (checklist|length / all_spots|length * 100)|int }}%</p>
+          <p class="meta">Complete</p>
+        </div>
+        <div class="card p-4 text-center">
+          <p class="stat">{{ all_spots|length - checklist|length }}</p>
+          <p class="meta">Remaining</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

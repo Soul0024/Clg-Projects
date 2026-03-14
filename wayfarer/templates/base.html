@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Wayfarer{% endblock %}</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Manrope:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: { DEFAULT: '#FAF8F3', dark: '#EDE8DF' },
+            warm:  { 100: '#EDE8DF', 200: '#D4CEC4', 400: '#8C8479', 900: '#2C2822' },
+          },
+          fontFamily: {
+            serif: ['Fraunces', 'Georgia', 'serif'],
+            sans:  ['Manrope', 'system-ui', 'sans-serif'],
+            mono:  ['"IBM Plex Mono"', 'monospace'],
+          },
+          borderRadius: { glass: '20px', card: '16px', pill: '999px' },
+          boxShadow: {
+            glass: '0 4px 32px rgba(44,40,34,0.07), 0 1px 4px rgba(44,40,34,0.04)',
+            hover: '0 12px 48px rgba(44,40,34,0.13), 0 2px 8px rgba(44,40,34,0.06)',
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-ivory text-warm-900 font-sans antialiased">
+  <!-- Paper texture overlay -->
+  <div class="paper-texture pointer-events-none fixed inset-0 z-50"></div>
+  
+  <!-- Navigation with radio tabs -->
+  <nav class="glass-nav fixed top-0 left-0 right-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <a href="/" class="font-serif text-2xl font-light tracking-wide text-warm-900 no-underline">Wayfarer</a>
+        
+        <!-- Radio tab navigation (CSS-only active state) -->
+        <div class="nav-tabs">
+          <input type="radio" name="nav-tab" id="nav-home" class="nav-radio" {% if request.endpoint == 'home' %}checked{% endif %}>
+          <label for="nav-home" class="nav-label">
+            <a href="/">Home</a>
+          </label>
+          
+          <input type="radio" name="nav-tab" id="nav-discover" class="nav-radio" {% if request.endpoint == 'discover' %}checked{% endif %}>
+          <label for="nav-discover" class="nav-label">
+            <a href="/discover">Discover</a>
+          </label>
+          
+          <input type="radio" name="nav-tab" id="nav-stories" class="nav-radio" {% if request.endpoint == 'stories' %}checked{% endif %}>
+          <label for="nav-stories" class="nav-label">
+            <a href="/stories">Stories</a>
+          </label>
+          
+          <input type="radio" name="nav-tab" id="nav-journey" class="nav-radio" {% if request.endpoint == 'journey' %}checked{% endif %}>
+          <label for="nav-journey" class="nav-label">
+            <a href="/journey">My Journey</a>
+          </label>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main content -->
+  <main class="relative z-10 pt-20">
+    {% block content %}{% endblock %}
+  </main>
+  
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-warm-200/50 mt-20">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <p class="font-serif text-warm-400 text-lg">Wayfarer</p>
+        <p class="meta text-warm-400">© 2024 Wayfarer. The road between is where the story lives.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

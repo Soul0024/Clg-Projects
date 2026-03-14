@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Stories — Wayfarer{% endblock %}
+
+{% block content %}
+<section class="section container">
+  <h2 class="mb-12">Travel Essays</h2>
+  
+  <!-- Stories Accordion (Checkbox Hack - CSS Only) -->
+  <div class="stories-list">
+    {% for story in stories %}
+    <div class="story-item">
+      <input type="checkbox" id="{{ story.id }}" class="story-toggle">
+      <label for="{{ story.id }}" class="story-header">
+        <div>
+          <h3>{{ story.title }}</h3>
+          <span class="meta">{{ story.date }} · {{ story.tags | join(' · ') }}</span>
+        </div>
+        <span class="chevron">↓</span>
+      </label>
+      
+      <div class="story-body">
+        <img src="https://images.unsplash.com/photo-{{ story.unsplash_id }}?w=1600&fit=crop" 
+             alt="{{ story.title }}"
+             loading="lazy">
+        
+        <blockquote class="pull-quote">"{{ story.pull_quote }}"</blockquote>
+        
+        <p class="mb-6">{{ story.body }}</p>
+        
+        <!-- Pull-quote copy interaction (user-select: all + :focus tooltip) -->
+        <div class="quote-copy" tabindex="0">
+          <span class="meta">Click to select: </span>"{{ story.pull_quote }}"
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
